@@ -1,0 +1,27 @@
+# McoresScanner - END
+# Chunks scanned: 52000
+# Total blocks: 3394560000
+# Format: block_id,count,percentage
+
+minecraft:air,3260578566,96.053054%
+minecraft:end_stone,133537326,3.933863%
+minecraft:chorus_plant,266689,0.007856%
+minecraft:obsidian,121598,0.003582%
+minecraft:chorus_flower,33316,0.000981%
+minecraft:purpur_block,9956,0.000293%
+minecraft:purpur_stairs,3819,0.000113%
+minecraft:purpur_pillar,3256,0.000096%
+minecraft:end_stone_bricks,3140,0.000093%
+minecraft:magenta_stained_glass,701,0.000021%
+minecraft:purpur_slab,570,0.000017%
+minecraft:iron_bars,438,0.000013%
+minecraft:end_rod,290,0.000009%
+minecraft:bedrock,162,0.000005%
+minecraft:magenta_wall_banner,70,0.000002%
+minecraft:ladder,50,0.000001%
+minecraft:fire,30,0.000001%
+minecraft:end_gateway,11,0.000000%
+minecraft:chest,9,0.000000%
+minecraft:brewing_stand,1,0.000000%
+minecraft:ender_chest,1,0.000000%
+minecraft:dragon_wall_head,1,0.000000%

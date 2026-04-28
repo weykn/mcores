@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McOres — Block Distribution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080a0d;
+            --surface: #0f1218;
+            --surface2: #161b22;
+            --border: #1e2530;
+            --text: #b8c8d8;
+            --text-dim: #4a5a6a;
+            --text-bright: #e0eaf4;
+            --accent: #22ddf0;
+            --accent2: #f0c040;
+            --nether: #dd2222;
+            --end: #9966dd;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                    linear-gradient(var(--border) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 48px 48px;
+            opacity: 0.18;
+            pointer-events: none;
+            z-index: 0;
+        }
+        #app { position: relative; z-index: 1; }
+
+        /* HEADER */
+        header {
+            padding: 48px 48px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .logo h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 700;
+            color: var(--text-bright);
+            letter-spacing: -3px;
+            line-height: 1;
+        }
+        .logo h1 em { color: var(--accent); font-style: normal; }
+        .logo p {
+            margin-top: 6px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+        .hstats { display: flex; gap: 16px; flex-wrap: wrap; }
+        .hstat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .hstat strong {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -1px;
+            margin-bottom: 2px;
+        }
+
+        /* CONTROLS */
+        .controls {
+            padding: 20px 48px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 36px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .cgroup { display: flex; flex-direction: column; gap: 7px; }
+        .clabel {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+        .trow { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        .tbtn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 5px 14px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.12s;
+            text-transform: uppercase;
+            user-select: none;
+        }
+        .tbtn:hover { border-color: var(--text-dim); color: var(--text); }
+        .tbtn.active { background: var(--accent); border-color: var(--accent); color: #000; }
+        .tbtn.dim-nether.active { background: var(--nether); border-color: var(--nether); color: #fff; }
+        .tbtn.dim-end.active    { background: var(--end);    border-color: var(--end);    color: #fff; }
+        .tbtn.seed-btn.active   { background: var(--accent2); border-color: var(--accent2); color: #000; }
+
+        .search {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 5px 14px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            width: 220px;
+            outline: none;
+            transition: border-color 0.12s;
+        }
+        .search:focus { border-color: var(--accent); }
+        .search::placeholder { color: var(--text-dim); }
+
+        .fbtn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 5px 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.12s;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+        .fbtn:hover, .fbtn.active { border-color: var(--accent2); color: var(--accent2); }
+
+        /* TABLE */
+        main { padding: 28px 48px 60px; }
+        .thead {
+            display: grid;
+            grid-template-columns: 44px 1fr 130px 160px 260px;
+            gap: 12px;
+            padding: 6px 14px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2px;
+        }
+        .trow-data {
+            display: grid;
+            grid-template-columns: 44px 1fr 130px 160px 260px;
+            gap: 12px;
+            padding: 9px 14px;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #0d1117;
+            transition: background 0.1s, border-color 0.1s;
+            align-items: center;
+            animation: rowIn 0.25s ease forwards;
+            opacity: 0;
+        }
+        .trow-data:hover { background: var(--surface); border-color: var(--border); }
+        @keyframes rowIn {
+            from { opacity:0; transform: translateY(4px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        .col-rank {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            text-align: right;
+        }
+        .col-name {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+        }
+        .col-name span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .dot { width: 7px; height: 7px; flex-shrink: 0; background: var(--text-dim); }
+        .col-count {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            text-align: right;
+        }
+        .col-pct {
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-bright);
+            text-align: right;
+        }
+        .col-bar { display: flex; align-items: center; }
+        .bar-track {
+            flex: 1;
+            height: 3px;
+            background: var(--surface2);
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            min-width: 2px;
+            background: var(--accent);
+            position: relative;
+        }
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            right: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: rgba(255,255,255,0.7);
+        }
+        .empty {
+            padding: 100px 0;
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+        }
+        .empty .icon { font-size: 52px; display: block; margin-bottom: 20px; opacity: 0.25; }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 48px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); }
+
+        @media (max-width: 700px) {
+            header, .controls, main, footer { padding-left: 18px; padding-right: 18px; }
+            .thead, .trow-data { grid-template-columns: 32px 1fr 90px 110px; }
+            .thead > *:last-child, .trow-data .col-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <header>
+        <div class="logo">
+            <h1>Mc<em>Ores</em></h1>
+            <p>Minecraft Block Distribution Database</p>
+        </div>
+        <div class="hstats">
+            <div class="hstat"><strong id="s-blocks">—</strong>blocks scanned</div>
+            <div class="hstat"><strong id="s-chunks">—</strong>chunks scanned</div>
+            <div class="hstat"><strong id="s-unique">—</strong>unique blocks</div>
+        </div>
+    </header>
+
+    <div class="controls">
+        <div class="cgroup">
+            <div class="clabel">Dimension</div>
+            <div class="trow">
+                <button class="tbtn dim-btn active" data-dim="overworld">Overworld</button>
+                <button class="tbtn dim-nether dim-btn" data-dim="nether">Nether</button>
+                <button class="tbtn dim-end dim-btn" data-dim="end">The End</button>
+            </div>
+        </div>
+
+        <div class="cgroup">
+            <div class="clabel">Source</div>
+            <div class="trow" id="seed-row">
+                <button class="tbtn active" data-seed="global">Global</button>
+            </div>
+        </div>
+
+        <div class="cgroup">
+            <div class="clabel">Filter</div>
+            <div class="trow">
+                <button class="fbtn active" data-filter="all">All</button>
+                <button class="fbtn" data-filter="ores">Ores only</button>
+            </div>
+        </div>
+
+        <div class="cgroup">
+            <div class="clabel">Max %</div>
+            <input class="search" id="max-pct" type="number" placeholder="e.g. 0.01" step="any" min="0" style="width:130px">
+        </div>
+
+        <div class="cgroup">
+            <div class="clabel">Search</div>
+            <input class="search" id="search" type="text" placeholder="block name...">
+        </div>
+    </div>
+
+    <main>
+        <div class="thead">
+            <div>#</div>
+            <div>Block</div>
+            <div style="text-align:right">Count</div>
+            <div style="text-align:right">Percentage</div>
+            <div>Distribution</div>
+        </div>
+        <div id="tbody"></div>
+    </main>
+
+    <footer>
+        <span>McOres · Minecraft 26.x</span>
+    </footer>
+
+</div>
+<script>
+    const ORE_COLORS = {
+        coal:             '#666',
+        iron:             '#c8a882',
+        copper:           '#d06030',
+        gold:             '#f0c040',
+        redstone:         '#dd2222',
+        emerald:          '#22cc66',
+        lapis:            '#2266cc',
+        diamond:          '#22ddf0',
+        ancient_debris:   '#7040b0',
+        nether_quartz:    '#ddd8cc',
+        nether_gold:      '#f0c040',
+        deepslate_coal:   '#555',
+        deepslate_iron:   '#c8a882',
+        deepslate_copper: '#d06030',
+        deepslate_gold:   '#f0c040',
+        deepslate_redstone:'#dd2222',
+        deepslate_emerald:'#22cc66',
+        deepslate_lapis:  '#2266cc',
+        deepslate_diamond:'#22ddf0',
+    };
+
+    const ORE_BLOCKS = new Set([
+        'minecraft:coal_ore','minecraft:deepslate_coal_ore',
+        'minecraft:iron_ore','minecraft:deepslate_iron_ore',
+        'minecraft:copper_ore','minecraft:deepslate_copper_ore',
+        'minecraft:gold_ore','minecraft:deepslate_gold_ore','minecraft:nether_gold_ore',
+        'minecraft:redstone_ore','minecraft:deepslate_redstone_ore',
+        'minecraft:emerald_ore','minecraft:deepslate_emerald_ore',
+        'minecraft:lapis_ore','minecraft:deepslate_lapis_ore',
+        'minecraft:diamond_ore','minecraft:deepslate_diamond_ore',
+        'minecraft:nether_quartz_ore',
+        'minecraft:ancient_debris',
+        'minecraft:coal_block',
+        'minecraft:iron_block','minecraft:raw_iron_block',
+        'minecraft:copper_block','minecraft:raw_copper_block',
+        'minecraft:gold_block','minecraft:raw_gold_block',
+        'minecraft:redstone_block',
+        'minecraft:emerald_block',
+        'minecraft:lapis_block',
+        'minecraft:diamond_block',
+        'minecraft:quartz_block',
+        'minecraft:netherite_block',
+        'minecraft:netherite_scrap',
+    ]);
+    function isOre(id) { return ORE_BLOCKS.has(id); }
+
+    function getOreColor(id) {
+        for (const [k, c] of Object.entries(ORE_COLORS)) {
+            if (id.includes(k)) return c;
+        }
+        return null;
+    }
+
+    function fmt(n) {
+        if (n >= 1e12) return (n/1e12).toFixed(2)+'T';
+        if (n >= 1e9)  return (n/1e9).toFixed(2)+'B';
+        if (n >= 1e6)  return (n/1e6).toFixed(2)+'M';
+        if (n >= 1e3)  return (n/1e3).toFixed(1)+'K';
+        return n.toLocaleString();
+    }
+
+    function parseLog(text) {
+        const rows = [];
+        let chunks = 0;
+        for (const line of text.split('\n')) {
+            if (line.startsWith('# Chunks scanned:')) {
+                chunks = parseInt(line.split(':')[1]) || 0;
+                continue;
+            }
+            if (line.startsWith('#') || !line.trim()) continue;
+            const parts = line.split(',');
+            if (parts.length < 2) continue;
+            rows.push({ id: parts[0].trim(), count: parseInt(parts[1])||0, pct: parseFloat(parts[2])||0 });
+        }
+        return { rows, chunks };
+    }
+
+    async function fetchLog(path) {
+        try {
+            const r = await fetch(path);
+            return r.ok ? r.text() : null;
+        } catch { return null; }
+    }
+
+    // ── Persist state ──
+    function savePrefs() {
+        try {
+            localStorage.setItem('mcores', JSON.stringify({
+                dims: [...state.dims],
+                seed: state.seed,
+                filter: state.filter,
+                maxPct: state.maxPct,
+                search: state.search,
+            }));
+        } catch {}
+    }
+
+    function loadPrefs() {
+        try {
+            const p = JSON.parse(localStorage.getItem('mcores') || '{}');
+            if (p.dims?.length) state.dims = new Set(p.dims);
+            if (p.seed) state.seed = p.seed;
+            if (p.filter) state.filter = p.filter;
+            if (p.maxPct !== undefined) state.maxPct = p.maxPct;
+            if (p.search) state.search = p.search;
+        } catch {}
+    }
+
+    const state = { dims: new Set(['overworld']), seed:'global', filter:'all', maxPct: null, search:'', data:{}, chunks:{}, seeds:[] };
+    loadPrefs();
+
+    async function loadData() {
+        const dims = ['overworld','nether','end'];
+        const seedDirs = ['global'];
+
+        const sf = await fetchLog('seeds.txt');
+        if (sf) {
+            for (const line of sf.split('\n')) {
+                const s = line.trim();
+                if (s && !seedDirs.includes(s)) seedDirs.push(s);
+            }
+        }
+
+        for (const seed of seedDirs) {
+            state.data[seed] = {};
+            state.chunks[seed] = {};
+            for (const dim of dims) {
+                const text = await fetchLog(`${seed}/${dim}_blocks.log`);
+                if (text) {
+                    const { rows, chunks } = parseLog(text);
+                    state.data[seed][dim] = rows;
+                    state.chunks[seed][dim] = chunks;
+                }
+            }
+            if (dims.some(d => state.data[seed][d]?.length > 0)) {
+                state.seeds.push(seed);
+            }
+        }
+
+        // If saved seed no longer exists, fall back to global
+        if (!state.seeds.includes(state.seed)) state.seed = state.seeds[0] || 'global';
+
+        buildSeedToggles();
+        applyPrefsToUI();
+        render();
+    }
+
+    function applyPrefsToUI() {
+        // Dimensions
+        document.querySelectorAll('.dim-btn').forEach(btn => {
+            btn.classList.toggle('active', state.dims.has(btn.dataset.dim));
+        });
+        // Filter
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === state.filter);
+        });
+        // Max pct
+        if (state.maxPct !== null) document.getElementById('max-pct').value = state.maxPct;
+        // Search
+        if (state.search) document.getElementById('search').value = state.search;
+    }
+
+    function buildSeedToggles() {
+        const row = document.getElementById('seed-row');
+        row.innerHTML = '';
+        for (const seed of state.seeds) {
+            const label = seed === 'global' ? 'Global' : 'Seed ' + seed.replace('seed_','');
+            const btn = document.createElement('button');
+            btn.className = 'tbtn seed-btn' + (seed === state.seed ? ' active' : '');
+            btn.dataset.seed = seed;
+            btn.textContent = label;
+            btn.addEventListener('click', () => {
+                state.seed = seed;
+                document.querySelectorAll('.seed-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                savePrefs();
+                render();
+            });
+            row.appendChild(btn);
+        }
+    }
+
+    function combineDims() {
+        const combined = new Map();
+        let totalChunks = 0;
+        for (const dim of state.dims) {
+            const rows = state.data[state.seed]?.[dim] || [];
+            totalChunks += state.chunks[state.seed]?.[dim] || 0;
+            for (const row of rows) {
+                combined.set(row.id, (combined.get(row.id) || 0) + row.count);
+            }
+        }
+        const totalBlocks = [...combined.values()].reduce((a, b) => a + b, 0);
+        const rows = [...combined.entries()]
+            .map(([id, count]) => ({ id, count, pct: totalBlocks > 0 ? count * 100 / totalBlocks : 0 }))
+            .sort((a, b) => b.count - a.count);
+        return { rows, totalBlocks, totalChunks };
+    }
+
+    function render() {
+        const { rows, totalBlocks, totalChunks } = combineDims();
+
+        document.getElementById('s-blocks').textContent = fmt(totalBlocks);
+        document.getElementById('s-chunks').textContent = fmt(totalChunks);
+        document.getElementById('s-unique').textContent = rows.length.toLocaleString();
+
+        let filtered = rows.filter(r => {
+            if (state.filter === 'ores' && !isOre(r.id)) return false;
+            if (state.maxPct !== null && r.pct > state.maxPct) return false;
+            if (state.search && !r.id.includes(state.search.toLowerCase())) return false;
+            return true;
+        });
+
+        const tbody = document.getElementById('tbody');
+        if (!filtered.length) {
+            tbody.innerHTML = `<div class="empty"><span class="icon">⛏</span>${
+                rows.length === 0
+                    ? 'No data loaded. Make sure log files are at <code>global/overworld_blocks.log</code> etc.'
+                    : 'No blocks match your filter.'
+            }</div>`;
+            return;
+        }
+
+        const maxPct = filtered[0]?.pct || 1;
+        tbody.innerHTML = '';
+
+        filtered.forEach((row, i) => {
+            const color = getOreColor(row.id) || 'var(--text-dim)';
+            const barColor = getOreColor(row.id) || 'var(--accent)';
+            const barW = Math.max(0.5, (row.pct / maxPct) * 100).toFixed(2);
+            const delay = Math.min(i * 10, 400);
+            const el = document.createElement('div');
+            el.className = 'trow-data';
+            el.style.animationDelay = delay + 'ms';
+            el.innerHTML = `
+      <div class="col-rank">${i+1}</div>
+      <div class="col-name">
+        <div class="dot" style="background:${color}"></div>
+        <span title="${row.id}">${row.id}</span>
+      </div>
+      <div class="col-count">${fmt(row.count)}</div>
+      <div class="col-pct">${row.pct.toFixed(6)}%</div>
+      <div class="col-bar">
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${barW}%;background:${barColor}"></div>
+        </div>
+      </div>`;
+            tbody.appendChild(el);
+        });
+    }
+
+    document.querySelectorAll('.dim-btn').forEach(btn => btn.addEventListener('click', () => {
+        const dim = btn.dataset.dim;
+        if (state.dims.has(dim)) {
+            if (state.dims.size === 1) return;
+            state.dims.delete(dim);
+            btn.classList.remove('active');
+        } else {
+            state.dims.add(dim);
+            btn.classList.add('active');
+        }
+        savePrefs();
+        render();
+    }));
+
+    document.querySelectorAll('[data-filter]').forEach(btn => btn.addEventListener('click', () => {
+        state.filter = btn.dataset.filter;
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        savePrefs();
+        render();
+    }));
+
+    document.getElementById('max-pct').addEventListener('input', e => {
+        const v = parseFloat(e.target.value);
+        state.maxPct = isNaN(v) ? null : v;
+        savePrefs();
+        render();
+    });
+
+    document.getElementById('search').addEventListener('input', e => {
+        state.search = e.target.value.trim();
+        savePrefs();
+        render();
+    });
+
+    loadData();
+</script>
+</body>
+</html>

@@ -1,27 +1,27 @@
 # McoresScanner - END
-# Chunks scanned: 59500
-# Total blocks: 3884160000
+# Chunks scanned: 63500
+# Total blocks: 4145280000
 # Format: block_id,count,percentage
 
-minecraft:air,3724735758,95.895528%
-minecraft:end_stone,158916203,4.091392%
-minecraft:chorus_plant,317098,0.008164%
-minecraft:obsidian,121650,0.003132%
-minecraft:chorus_flower,39672,0.001021%
-minecraft:purpur_block,13428,0.000346%
-minecraft:purpur_stairs,5149,0.000133%
-minecraft:purpur_pillar,4135,0.000106%
-minecraft:end_stone_bricks,4065,0.000105%
-minecraft:magenta_stained_glass,901,0.000023%
-minecraft:purpur_slab,724,0.000019%
-minecraft:iron_bars,438,0.000011%
-minecraft:end_rod,374,0.000010%
-minecraft:bedrock,174,0.000004%
-minecraft:ladder,84,0.000002%
-minecraft:magenta_wall_banner,84,0.000002%
-minecraft:fire,30,0.000001%
-minecraft:chest,14,0.000000%
+minecraft:air,3978042801,95.965599%
+minecraft:end_stone,166662961,4.020548%
+minecraft:chorus_plant,330386,0.007970%
+minecraft:obsidian,162174,0.003912%
+minecraft:chorus_flower,41304,0.000996%
+minecraft:purpur_block,18247,0.000440%
+minecraft:purpur_stairs,6564,0.000158%
+minecraft:purpur_pillar,6360,0.000153%
+minecraft:end_stone_bricks,5368,0.000129%
+minecraft:magenta_stained_glass,1193,0.000029%
+minecraft:purpur_slab,1054,0.000025%
+minecraft:iron_bars,584,0.000014%
+minecraft:end_rod,550,0.000013%
+minecraft:bedrock,184,0.000004%
+minecraft:ladder,96,0.000002%
+minecraft:magenta_wall_banner,88,0.000002%
+minecraft:fire,40,0.000001%
+minecraft:chest,23,0.000001%
 minecraft:end_gateway,12,0.000000%
+minecraft:ender_chest,5,0.000000%
 minecraft:brewing_stand,3,0.000000%
 minecraft:dragon_wall_head,3,0.000000%
-minecraft:ender_chest,1,0.000000%

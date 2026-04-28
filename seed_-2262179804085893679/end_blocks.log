@@ -1,11 +1,11 @@
 # McoresScanner - END
-# Chunks scanned: 63500
-# Total blocks: 142832640
+# Chunks scanned: 69084
+# Total blocks: 507356160
 # Format: block_id,count,percentage
 
-minecraft:air,141570527,99.116369%
-minecraft:end_stone,1221423,0.855143%
-minecraft:obsidian,40524,0.028372%
-minecraft:iron_bars,146,0.000102%
-minecraft:bedrock,10,0.000007%
-minecraft:fire,10,0.000007%
+minecraft:air,506090179,99.750475%
+minecraft:end_stone,1225291,0.241505%
+minecraft:obsidian,40524,0.007987%
+minecraft:iron_bars,146,0.000029%
+minecraft:bedrock,10,0.000002%
+minecraft:fire,10,0.000002%
